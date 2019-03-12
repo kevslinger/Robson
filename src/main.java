@@ -7,7 +7,7 @@ public class main {
     public static void main(String[] arc) {
 
 
-        String path = "/Users/kevin/Desktop/New Classes/Programming Techniques/Robson/in.txt";
+        String path = "/Users/kevin/Desktop/New Classes/Programming Techniques/Robson/in4.txt";
         BTNode root = create(path);
         preOrderTraversal(root);
         modRobson(root);
@@ -111,7 +111,7 @@ public class main {
         BTNode p = root;
         BTNode top = null;//We can never have a negative node, so this makes for a good sentinel.
         BTNode predp = new BTNode(-1);
-        BTNode stack;
+        BTNode stack = null;
         BTNode avail;
 
         while (true) {
@@ -132,7 +132,7 @@ public class main {
                 avail = p;
                 while (!exchanged && predp.info != -1){// || predp.info == root.info)) {
                     //System.out.println("inside while");
-                    BTNode old = p;
+                    //BTNode old = p;
                     if (predp.right == null) {// This means we're in a left subtree with a null right subtree.
                         BTNode new_predp = predp.left; // Predp's left is its predecessor.
                         predp.left = p;// Restore the link to predp's left subtree.
@@ -143,42 +143,37 @@ public class main {
                         predp.right = p;
                         p = predp;
                         predp = new_predp;
-                    } else if (top != null && predp.info == top.right.info) {// This is saying neither left nor right subtree are null.
+                    } else if (top != null && predp.info == top.info) {// This is saying neither left nor right subtree are null.
                                                                              // And also top isn't null AND top's right subtree is predp.
                                                                              // I believe this means we are coming up from a right subtree.
                         //System.out.println("Top does not equal null condition. Predp is " + predp.info + ", and p is " + p.info);
-                        boolean flag = false;
-                        if (p.info == 8){
-                            flag = true;
-                        //    System.out.println("R: Root left is " + root.left + " and root right is " + root.right.info);
-                        }
-                        BTNode old_top = top; // Temp top variable.
+                        BTNode oldTop = top; // Temp top variable.
+                        BTNode oldStack = stack;
+                        stack = stack.left;
                         BTNode new_predp = predp.left; // Left pointer actually points to predecessor.
                         predp.left = predp.right; // predp's right pointer actually points to its left successor.
                         predp.right = p; // Restore predp's right link.
                         p = predp; // Move up a level.
                         predp = new_predp; // Move up predp.
-                        top = top.left; // top's left subtree must point to its predecessor also.
-                        old_top.left = null; // This is also modifying what used to be top.
-                        old_top.right = null; // ^
-                        if (flag){
-                            flag = false;
-                        //    System.out.println("Now p is " + p.info + "and predp is " + predp.info);
-                        }
+                        top = oldStack.right; // top's left subtree must point to its predecessor also.
+                        oldStack.left = null; // This is also modifying what used to be top.
+                        oldStack.right = null; // ^
                     } else {
                         // In this case, we are coming up from the left, and we have not yet traversed the right subtree.
                         //System.out.println("Coming up from the left, p is " + p.info + " and Predp is " + predp.info);
-                        if (p.info == 2){
-                        //    System.out.println("L: Root left is " + root.left + " and root right is " + root.right.info);
-                        }
                         BTNode newP = null; // Trying to find a new p.
                         if (avail != null) { // We must have some sort of available pointer to become the next stack.
+                            BTNode oldStack = stack;
+                            stack = avail;
+                            avail = null;
                             newP = predp.right; // predp's right subtree points to the right subtree.
-                            avail.left = top; // avail is a new stack entry.
-                            avail.right = predp;
-                            top = avail; // And top of the stack.
-                            avail = null; // it is not longer available.
                             predp.right = p; // predp's right pointer now points to its left successor because it's left pointer points to its pred.
+                            stack.left = oldStack; // avail is a new stack entry.
+                            stack.right = top;
+
+                            top = predp;
+                            //top = avail; // And top of the stack.
+
                             p = newP; // move p over to the right subtree.
                             exchanged = true; // We did the exchange!
                         } else {
@@ -195,64 +190,6 @@ public class main {
     }
 
 
-
-
-
-
-
-
-
-
-/*
-                    // This indicates we're at a leaf node, and must backtrack.
-                    // If predp == top, then we just finished traversing a right subtree.
-                    // Otherwise, we finished traversing a left subtree.
-                    //If we're coming up from the right, we can keep going until there is a new right node.
-                    if (predp.info == top.info) {
-                        do {
-                            //Restore the tree.
-                            predp.right = p;
-                            p = predp;
-                        } while (false);
-                    } else {
-                        predp.left = p; // Restore predp's left connection.
-                        p = predp; // This will take us up one level.
-                        if (p.right != null) { // if p.right isn't null, that means we're traversing the right subtree that has a root with non-null left subtreee.
-                            
-                        }
-                    }
-                }
-
-            } else{
-                break;
-            }
-        }
-
-
-        Stack list = new Stack();
-        while (p != null || list.length() > 0){
-            if (p != null) {
-                list.push(p);
-                printNode(p);
-                System.out.println();
-                if (p.left != null){
-                    p = p.left;
-                } else{
-                    p = p.right;
-                }
-            } else{
-                BTNode rptr = null;
-                BTNode q;
-                do{
-                    q = list.pop();
-                    //System.out.println("Inside do/while. q is " + q.info);
-                    if (list.length() > 0){
-                        rptr = list.pop().right;
-                    } //rptr is null by default, don't need an else.
-                }while(list.length() > 0 && q.equals(rptr));
-                p = rptr;
-            }
-        }*/
 
     public static void printNode(BTNode node){
         if (node == null){
