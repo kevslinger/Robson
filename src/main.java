@@ -5,14 +5,14 @@ import java.io.IOException;
 
 public class main {
     public static void main(String[] arc) {
-
-
-        String path = "/Users/kevin/Desktop/New Classes/Programming Techniques/Robson/in4.txt";
+        
+        String path = "in.txt";
         BTNode root = create(path);
         preOrderTraversal(root);
+        System.out.println();
         modRobson(root);
+        System.out.println();
         preOrderTraversal(root);
-
 
     }
 
@@ -75,6 +75,7 @@ public class main {
 
     /**
      * Function to print tree in pre-order traversal.
+     * Code was taken from our class note pseudo-code.
      * @param root
      */
     public static void preOrderTraversal(BTNode root){
@@ -116,6 +117,7 @@ public class main {
 
         while (true) {
             printNode(p);
+            printMetadata(p, predp, stack, root);
             //System.out.println(root.right.info);
             if (p.left != null) {//We have at least a left child.
                 BTNode tmp = p.left;
@@ -130,9 +132,7 @@ public class main {
             } else {//Neither left nor right child.
                 boolean exchanged = false;
                 avail = p;
-                while (!exchanged && predp.info != -1){// || predp.info == root.info)) {
-                    //System.out.println("inside while");
-                    //BTNode old = p;
+                while (!exchanged && predp.info != -1){
                     if (predp.right == null) {// This means we're in a left subtree with a null right subtree.
                         BTNode new_predp = predp.left; // Predp's left is its predecessor.
                         predp.left = p;// Restore the link to predp's left subtree.
@@ -145,9 +145,7 @@ public class main {
                         predp = new_predp;
                     } else if (top != null && predp.info == top.info) {// This is saying neither left nor right subtree are null.
                                                                              // And also top isn't null AND top's right subtree is predp.
-                                                                             // I believe this means we are coming up from a right subtree.
-                        //System.out.println("Top does not equal null condition. Predp is " + predp.info + ", and p is " + p.info);
-                        BTNode oldTop = top; // Temp top variable.
+                                                                             // this means we are coming up from a right subtree.
                         BTNode oldStack = stack;
                         stack = stack.left;
                         BTNode new_predp = predp.left; // Left pointer actually points to predecessor.
@@ -160,7 +158,6 @@ public class main {
                         oldStack.right = null; // ^
                     } else {
                         // In this case, we are coming up from the left, and we have not yet traversed the right subtree.
-                        //System.out.println("Coming up from the left, p is " + p.info + " and Predp is " + predp.info);
                         BTNode newP = null; // Trying to find a new p.
                         if (avail != null) { // We must have some sort of available pointer to become the next stack.
                             BTNode oldStack = stack;
@@ -172,7 +169,6 @@ public class main {
                             stack.right = top;
 
                             top = predp;
-                            //top = avail; // And top of the stack.
 
                             p = newP; // move p over to the right subtree.
                             exchanged = true; // We did the exchange!
@@ -185,7 +181,6 @@ public class main {
                     return;
                 }
             }
-            //try{ Thread.sleep(100); } catch (InterruptedException e) { e.printStackTrace();}
         }
     }
 
@@ -206,6 +201,35 @@ public class main {
         } else {
             System.out.print("Right successor is null. ");
         }
+        System.out.println();
+    }
+
+    public static void printMetadata(BTNode p, BTNode predp, BTNode stack, BTNode root){
+        if (p.info == 1){
+            System.out.println();
+            return;
+        }
+        System.out.println("Printing Path from " + p.info + " to root...");
+        BTNode tempPredp = predp;
+        while(tempPredp.info != 1){
+            printNode(tempPredp);
+            if (tempPredp.left != null && tempPredp.left.info < tempPredp.info){
+                tempPredp = tempPredp.left;
+            } else if (tempPredp.right != null && tempPredp.right.info < tempPredp.info){
+                tempPredp = tempPredp.right;
+            } else {
+                System.exit(9);
+            }
+        }
+        printNode(tempPredp);
+
+        System.out.println("Printing out stack...");
+        BTNode tempStack = stack;
+        while(tempStack != null){
+            printNode(tempStack);
+            tempStack = tempStack.left;
+        }
+
         System.out.println();
     }
 }
