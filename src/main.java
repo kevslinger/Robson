@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public class main {
     public static void main(String[] arc) {
-        
+
         String path = "in.txt";
         BTNode root = create(path);
         preOrderTraversal(root);
