@@ -148,8 +148,7 @@ public class main {
                                                                              // this means we are coming up from a right subtree.
                         BTNode oldStack = stack;
                         stack = stack.left;
-                        BTNode new_predp = predp.left; // Left pointer actually points to predecessor.
-                        predp.left = predp.right; // predp's right pointer actually points to its left successor.
+                        BTNode new_predp = predp.right; // The predecessor is stored in predp's right link.
                         predp.right = p; // Restore predp's right link.
                         p = predp; // Move up a level.
                         predp = new_predp; // Move up predp.
@@ -164,7 +163,8 @@ public class main {
                             stack = avail;
                             avail = null;
                             newP = predp.right; // predp's right subtree points to the right subtree.
-                            predp.right = p; // predp's right pointer now points to its left successor because it's left pointer points to its pred.
+                            predp.right = predp.left; // predp.left was pointing to predp's predecessor, but now we want it to be on the right subtree.
+                            predp.left = p; // Restore predp's left link back to it's left subtree.
                             stack.left = oldStack; // avail is a new stack entry.
                             stack.right = top;
 
